@@ -1,6 +1,6 @@
 """Module for fetching stock market index data."""
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List, Optional
 
 import pandas as pd
@@ -45,7 +45,7 @@ class StockDataFetcher:
             indices: Dictionary mapping index names to ticker symbols.
                 If None, uses DEFAULT_INDICES.
             start_date: Start date in 'YYYY-MM-DD' format.
-                If None, defaults to 10 years ago.
+                If None, defaults to 1900-01-01 (fetches all available data).
             end_date: End date in 'YYYY-MM-DD' format.
                 If None, defaults to today.
 
@@ -61,8 +61,8 @@ class StockDataFetcher:
             self.end_date = end_date
 
         if start_date is None:
-            default_start = datetime.now() - timedelta(days=365 * 10)
-            self.start_date = default_start.strftime("%Y-%m-%d")
+            # Default to 1900-01-01 to get all available historical data
+            self.start_date = "1900-01-01"
         else:
             self.start_date = start_date
 
@@ -166,11 +166,15 @@ class StockDataFetcher:
         """
         print(f"Fetching data for {name} ({ticker})...")
 
+        # Convert string dates to datetime objects for yfinance
+        start_dt = datetime.strptime(self.start_date, "%Y-%m-%d")
+        end_dt = datetime.strptime(self.end_date, "%Y-%m-%d")
+
         # Download data
         data = yf.download(
             ticker,
-            start=self.start_date,
-            end=self.end_date,
+            start=start_dt,
+            end=end_dt,
             progress=False
         )
 

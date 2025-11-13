@@ -57,7 +57,7 @@ pip install -r requirements.txt
 
 ### Basic Usage
 
-Run the analysis with default settings (last 10 years of data):
+Run the analysis with default settings (fetches all available historical data from 1900 onward):
 
 ```bash
 python main.py
@@ -83,7 +83,7 @@ python main.py \
 
 ### Command-Line Options
 
-- `--start-date`: Start date in YYYY-MM-DD format (default: 10 years ago)
+- `--start-date`: Start date in YYYY-MM-DD format (default: 1900-01-01, fetches all available data)
 - `--end-date`: End date in YYYY-MM-DD format (default: today)
 - `--min-drawdown`: Minimum drawdown magnitude to analyze, as decimal (default: 0.01 = 1%)
 - `--output-dir`: Directory to save output files (default: output)
