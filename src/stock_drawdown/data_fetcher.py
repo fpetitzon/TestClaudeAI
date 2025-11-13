@@ -166,15 +166,17 @@ class StockDataFetcher:
         """
         print(f"Fetching data for {name} ({ticker})...")
 
-        # Convert string dates to datetime objects for yfinance
-        start_dt = datetime.strptime(self.start_date, "%Y-%m-%d")
-        end_dt = datetime.strptime(self.end_date, "%Y-%m-%d")
+        # Use pandas Timestamp for better yfinance compatibility
+        start_ts = pd.Timestamp(self.start_date)
+        end_ts = pd.Timestamp(self.end_date)
 
         # Download data
+        # Note: yfinance can be picky about date formats
+        # Using pandas Timestamps ensures compatibility
         data = yf.download(
             ticker,
-            start=start_dt,
-            end=end_dt,
+            start=start_ts,
+            end=end_ts,
             progress=False
         )
 
