@@ -13,7 +13,7 @@ Usage:
 
 import argparse
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 # Add src to path
@@ -38,22 +38,20 @@ def parse_arguments():
     )
 
     default_end = datetime.now().strftime("%Y-%m-%d")
-    default_start = (datetime.now() - timedelta(days=365 * 10)).strftime(
-        "%Y-%m-%d"
-    )
 
     parser.add_argument(
         '--start-date',
         type=str,
-        default=default_start,
-        help=f'Start date in YYYY-MM-DD format (default: {default_start})'
+        default=None,
+        help='Start date in YYYY-MM-DD format '
+             '(default: 1900-01-01, fetches all available data)'
     )
 
     parser.add_argument(
         '--end-date',
         type=str,
-        default=default_end,
-        help=f'End date in YYYY-MM-DD format (default: {default_end})'
+        default=None,
+        help=f'End date in YYYY-MM-DD format (default: today - {default_end})'
     )
 
     parser.add_argument(
@@ -87,7 +85,6 @@ def main():
     output_dir = Path(args.output_dir)
     output_dir.mkdir(exist_ok=True)
 
-    print(f"Analysis Period: {args.start_date} to {args.end_date}")
     print(f"Minimum Drawdown: {args.min_drawdown * 100:.1f}%")
     print(f"Output Directory: {output_dir}")
     print()
@@ -102,6 +99,8 @@ def main():
             start_date=args.start_date,
             end_date=args.end_date
         )
+
+        print(f"Analysis Period: {fetcher.start_date} to {fetcher.end_date}")
 
         # Fetch data for main indices
         indices_to_fetch = [
