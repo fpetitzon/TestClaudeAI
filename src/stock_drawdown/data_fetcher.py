@@ -242,9 +242,22 @@ class StockDataFetcher:
             DataFrame with close prices for each index.
             Columns are index names, index is the date.
         """
-        close_prices = {}
-        for name, df in data.items():
-            close_prices[name] = df['Close']
+        if not data:
+            raise ValueError("No data provided to extract close prices")
 
-        result = pd.DataFrame(close_prices)
+        # Extract close prices as Series and combine
+        close_series = {}
+        for name, df in data.items():
+            if 'Close' in df.columns:
+                close_series[name] = df['Close'].copy()
+            else:
+                raise ValueError(
+                    f"'Close' column not found in data for {name}. "
+                    f"Available columns: {list(df.columns)}"
+                )
+
+        # Combine all series into a DataFrame using concat for proper alignment
+        result = pd.concat(close_series, axis=1)
+        result.columns = list(close_series.keys())
+
         return result.sort_index()
