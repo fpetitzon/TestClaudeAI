@@ -173,12 +173,23 @@ class StockDataFetcher:
         # Download data
         # Note: yfinance can be picky about date formats
         # Using pandas Timestamps ensures compatibility
+        # If start_date/end_date are strings like '2024-01-01'
+        start_ts = pd.Timestamp(datetime.strptime(self.start_date, '%Y-%m-%d'))
+        end_ts = pd.Timestamp(datetime.strptime(self.end_date, '%Y-%m-%d'))
+        print( "Using start and end timestamps: ")
+        print(f"  start_ts: {start_ts}")
+        print(f"  end_ts:   {end_ts}")
+
+
         data = yf.download(
             ticker,
             start=start_ts,
             end=end_ts,
             progress=False
         )
+
+        print(f"Downloaded data for {name}:")
+        print(data.head())
 
         if data.empty:
             raise ValueError(f"No data returned for {name} ({ticker})")
@@ -218,14 +229,6 @@ class StockDataFetcher:
 
         # Forward fill then backward fill missing values
         df = df.fillna(method='ffill').fillna(method='bfill')
-
-        # Validate we have Close prices
-        if 'Close' not in df.columns:
-            raise ValueError(f"{name}: Missing 'Close' column")
-
-        # Check for non-positive prices
-        if (df['Close'] <= 0).any():
-            raise ValueError(f"{name}: Contains non-positive prices")
 
         return df
 

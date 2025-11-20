@@ -1,6 +1,6 @@
 # Data fetching and manipulation
-yfinance==0.2.32
-pandas==2.1.4
+yfinance==0.2.66
+pandas==2.3.3
 numpy==1.26.2
 
 # Statistical analysis
